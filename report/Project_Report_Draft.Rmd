@@ -1,0 +1,115 @@
+---
+title: "The Invisible Ocean: Visual Analytics of 2023 Global Fishing Activity"
+subtitle: "DS4073 Data Visualization - Group Project Report (Draft)"
+author: "Team Member A, B, C, D, E"
+date: "`r Sys.Date()`"
+output:
+  html_document:
+    toc: true
+    toc_depth: 3
+    number_sections: true
+    theme: flatly
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+# Introduction
+
+TODO: motivate the project. Introduce "The Invisible Ocean" - most fishing activity
+is not directly observed - and state the guiding questions: where, when, with which
+gear, under which flag, and where the hotspots concentrate. State the measure:
+AIS-estimated **apparent fishing hours** for 2023, not landed catch and not a count
+of unique vessels.
+
+# Dataset Description
+
+TODO: describe the 2023 Global Fishing Watch v3.0 shared data package.
+
+- Unit of observation: one month x 0.1 degree grid cell x vessel flag x gear type.
+- Key measure: `fishing_hours` (hours of AIS-estimated apparent fishing activity).
+- Detail rows: 14,560,171. Global total: 111,712,128.6941 hours.
+- Supporting tables: `annual_grid.rds`, `monthly_global.csv`, `annual_area.csv`,
+  `annual_gear.csv`, `annual_flag.csv`, `monthly_area_gear_flag.rds`, and the
+  `data/detail/` and `data/monthly_grid/` monthly files.
+
+# Data Preprocessing
+
+TODO: summarise the shared preparation steps from `DS4073_GFW_2023_Shared/qa/`.
+
+- Raw source: GFW fleet monthly CSVs v3.0, 2023 (CC BY-NC 4.0).
+- Grid key `grid_id` is derived from the cell lower-left coordinates.
+- FAO marine areas are assigned by grid centre; unmatched and ambiguous centres are
+  kept and labelled.
+- Flags are grouped into `flag_group`; `geartype == "fishing"` is kept as
+  "Unspecified fishing".
+- Reconciliation: every module reproduces 111,712,128.6941 hours.
+
+# Task Abstraction (T01-T15)
+
+TODO: complete the task table. Each task names its question, data, and encoding.
+
+| Task | Module | Question | Planned view |
+|---|---|---|---|
+| T01 | A | Where is fishing activity observed? | 0.1 degree grid map |
+| T02 | A | Which FAO areas dominate? | Vertical bar ranking |
+| T03 | A | How concentrated are hours? | Cumulative curve |
+| T04 | B | How do hours vary by month? | TODO |
+| T05 | B | How does daily effort vary? | TODO |
+| T06 | B | Which month peaks per area? | TODO |
+| T07 | C | Which gears dominate? | Horizontal bar |
+| T08 | C | How does the gear mix change? | 100 percent stacked bar |
+| T09 | C | Where are leading gears observed? | Faceted maps |
+| T10 | D | Which flags dominate? | TODO |
+| T11 | D | How is flag activity distributed by area? | TODO |
+| T12 | D | Top three known flags per area? | TODO |
+| T13 | E | Which grids are hotspots? | TODO |
+| T14 | E | Which flags dominate hotspots? | TODO |
+| T15 | E | How does hotspot gear mix compare? | TODO |
+
+# Visualization Design Principles
+
+TODO: describe the shared design system.
+
+- Colour: a common sequential ramp for hours; a fixed categorical palette for gear.
+- Scales: bar charts start at zero; maps use one colour range across panels.
+- Uncertainty and limits: AIS coverage varies; cell area varies with latitude.
+- Accessibility: colour-blind-safe palettes; direct labels where possible.
+- Consistency: all percentages state their denominator; unknown and unmatched groups
+  are shown.
+
+# Results and Discussion
+
+TODO: merge the module findings A-E into a coherent story. Quote the reconciled
+numbers from each module `results/tables/`. Discuss where activity concentrates, the
+seasonal structure, gear and flag composition, and the hotspot composition. Link
+every claim to a figure or table.
+
+# Limitations
+
+TODO: discuss the limits of inference.
+
+- AIS-based effort excludes vessels without AIS and is affected by reception gaps.
+- Flag and gear classification are uncertain; unspecified gear is kept separate.
+- 2023 is a single year, so no longer-term trend can be claimed.
+- 0.1 degree cells differ in physical area with latitude.
+- The measure is hours of apparent activity, not catch or biomass.
+
+# Appendix
+
+TODO: list data dictionary fields, reconciliation tables, and repository links.
+
+- Shared data: `DS4073_GFW_2023_Shared/README.md`, `DATA_DICTIONARY.md`.
+- Reconciliation target: 111,712,128.6941 hours across 2023-01-01 to 2023-12-01.
+- Module outputs: `module_A` ... `module_E` `results/tables/`.
+
+# Team Contribution
+
+| Member | Module | Tasks | Main deliverables |
+|---|---|---|---|
+| Member A | Spatial distribution | T01-T03 | `analysis_A.R`, figures, report notes |
+| Member B | Monthly variation | T04-T06 | `analysis_B.R`, figures, report notes |
+| Member C | Gear classification | T07-T09 | `analysis_C.R`, figures, slides |
+| Member D | Flag distribution | T10-T12 | `analysis_D.R`, figures, report notes |
+| Member E | Hotspot synthesis | T13-T15 | `analysis_E.R`, slides, dashboard |

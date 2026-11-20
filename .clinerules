@@ -1,0 +1,15 @@
+# Project Rules for DS4073 Group Project: The Invisible Ocean
+
+1. **STRICT ENGLISH-ONLY RULE**:
+   - Every single file you create or modify (`.R`, `.Rmd`, `.md`, `.csv`, `.html`, `.py`, comments, placeholders, console messages) MUST be written 100% in English.
+   - Do NOT include any Chinese characters anywhere in code, comments, documentation, or filenames.
+
+2. **Codebase & Architecture Alignment**:
+   - Follow the exact directory structure, relative data paths (`../DS4073_GFW_2023_Shared`), and reconciliation conventions established in `module_A/` (`analysis_A.R`, `A_T01_T03.Rmd`) and `module_C/` (`analysis_C.R`, `C_T07_T09.Rmd`).
+   - All module scripts must accept `../DS4073_GFW_2023_Shared` as the shared data directory path via `commandArgs(trailingOnly = TRUE)` and write outputs to `results/tables/` and `results/figures/`.
+   - Standard global reconciliation target for 2023 apparent fishing hours: `111,712,128.6941` hours across 12 months (`2023-01-01` to `2023-12-01`).
+
+3. **Data Integrity Rules**:
+   - `fishing_hours` represents AIS-estimated apparent fishing activity in hours (not landed catch or unique vessel counts).
+   - Never sum `mmsi_present` across cells or months to claim unique vessels.
+   - Keep `geartype == "fishing"` labeled as `"Unspecified fishing"`.

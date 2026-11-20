@@ -1,0 +1,24 @@
+# --- DS4073 The Invisible Ocean ---
+# Large local data and source directories (never commit raw GFW data)
+DS4073_GFW_2023_Shared/data/
+DS4073_GFW_2023_Shared/sources/
+
+# Archives and binary R data
+*.zip
+*.rds
+*.RData
+
+# R session and project files
+.Rhistory
+.Rproj.user/
+
+# Python bytecode (ppt/build_master_deck.py)
+__pycache__/
+*.pyc
+
+# Operating system files
+.DS_Store
+Thumbs.db
+
+# Keep the small Natural Earth land asset required by module A
+!module_A/DS4073_A_T01_T03/assets/ne_110m_land.zip

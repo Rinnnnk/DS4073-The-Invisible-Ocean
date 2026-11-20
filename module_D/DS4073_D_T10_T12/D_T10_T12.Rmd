@@ -1,0 +1,33 @@
+---
+title: "The Invisible Ocean | D. Flag distribution"
+subtitle: "T10-T12 (scaffold)"
+output: html_document
+params:
+  shared_dir: "../../DS4073_GFW_2023_Shared"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%")
+source("analysis_D.R", local = TRUE)
+result <- run_d(params$shared_dir)
+total_millions <- formatC(result$total_hours / 1e6, format = "f", digits = 2, big.mark = ",")
+```
+
+## T10 - Flag ranking {#t10}
+
+TODO(member-d): rank vessel flags by annual estimated fishing hours.
+
+## T11 - Flag activity by FAO area {#t11}
+
+TODO(member-d): show how flag activity is distributed across marine areas.
+
+## T12 - Top three known flags per area {#t12}
+
+TODO(member-d): compute the top three known flags contribution per area.
+
+## Method and sources
+
+Apparent fishing activity is estimated from AIS (Global Fishing Watch v3.0, 2023)
+and measured in hours. `flag_group` labels the GFW flag classification; `UNKNOWN`
+and `UNK_UNRESOLVED` are kept visible. The scaffold reconciles to
+`r total_millions` million hours. See `analysis_D.R`.

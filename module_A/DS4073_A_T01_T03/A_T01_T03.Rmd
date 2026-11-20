@@ -1,0 +1,69 @@
+---
+title: "2023 global fishing activity"
+subtitle: "The Invisible Ocean | A. Spatial distribution"
+output:
+  html_document:
+    self_contained: true
+    css: report.css
+params:
+  shared_dir: "../DS4073_GFW_2023_Shared"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE,
+                      out.width = "100%", fig.align = "center")
+source("analysis_A.R", local = TRUE)
+result <- run_a(params$shared_dir)
+matched <- result$areas[official_area == TRUE]
+unmatched <- result$areas[area_code == "UNMATCHED"]
+peak <- result$peak
+```
+
+[**T01 Annual map**](#t01) &nbsp;&nbsp; [**T02 FAO areas**](#t02) &nbsp;&nbsp; [**T03 Concentration**](#t03)
+
+<div class="summary">
+<strong>`r hours_format(result$total / 1e6, 2)` million hours</strong> of estimated fishing activity across
+<strong>`r hours_format(result$active)` active grid cells</strong> in 2023.
+Each grid covers 0.1° by 0.1° and can include activity from multiple vessels.
+</div>
+
+## T01 · Annual grid map {#t01}
+
+```{r map}
+knitr::include_graphics(result$paths[["T01"]])
+```
+
+The highest-hour grid was centred at **`r sprintf("%.2f° E, %.2f° N", peak$lon_center, peak$lat_center)`** near the coast of eastern China, with **`r hours_format(peak$fishing_hours, 2)` hours**. The Northwest Pacific accounts for a large share of the global total, as the regional comparison below quantifies. Of the `r hours_format(result$observed)` grid cells recorded in the dataset, `r hours_format(result$zero)` had zero estimated fishing hours.
+
+## T02 · FAO marine area totals {#t02}
+
+```{r areas}
+knitr::include_graphics(result$paths[["T02"]])
+```
+
+The **Northwest Pacific (61)** recorded **`r hours_format(matched$fishing_hours[1] / 1e6, 2)` million hours**, or **`r percent_format(matched$share_of_global[1])` of the global total**. The **Northeast Atlantic (27)** and **Western Indian Ocean (51)** followed with `r hours_format(matched$fishing_hours[2] / 1e6, 2)` and `r hours_format(matched$fishing_hours[3] / 1e6, 2)` million hours, respectively. The global denominator includes `r hours_format(unmatched$fishing_hours / 1e6, 2)` million hours (`r percent_format(unmatched$share_of_global)`) from grid centres outside the FAO marine polygons.
+
+## T03 · Fishing-hour concentration {#t03}
+
+```{r concentration}
+knitr::include_graphics(result$paths[["T03"]])
+```
+
+```{r concentration-table}
+knitr::kable(data.frame(
+  "Top share of active grids" = paste0(result$cutoffs$top_grid_percent, "%"),
+  "Grid count" = hours_format(result$cutoffs$grids),
+  "Cumulative hours" = hours_format(result$cutoffs$fishing_hours, 2),
+  "Share of global hours" = percent_format(result$cutoffs$hours_fraction),
+  check.names = FALSE), align = "lrrr")
+```
+
+Ranking is based on annual hours, with ties ordered by `grid_id`. A cell is active if its annual hours are positive. Each cutoff rounds up to a whole grid, and the cumulative curve ends at 100%. Shares describe a percentage of **active grid cells**. The physical area of a 0.1° cell varies by latitude.
+
+## Sources and interpretation
+
+Global Fishing Watch estimates apparent fishing activity from AIS observations. AIS reception and classification vary by location. Report the results as **estimated hours in the observed data**. The regional chart compares total hours and does not adjust for region size.
+
+- [Global Fishing Watch v3.0 dataset and documentation](https://doi.org/10.5281/zenodo.14982712)
+- [FAO marine fishing areas](https://www.fao.org/cwp-on-fishery-statistics/handbook/general-concepts/main-water-areas)
+- [Natural Earth land polygons](https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-land/)

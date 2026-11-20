@@ -1,0 +1,21 @@
+area_code,grids,active_grids,fishing_hours,area_name
+18,10993,938,8796.618,Arctic Sea
+21,48041,27375,1238062.0308,"Atlantic, Northwest"
+27,167413,100966,9014508.4115,"Atlantic, Northeast"
+31,56924,31652,996854.187,"Atlantic, Western Central"
+34,97902,68280,2238865.4784,"Atlantic, Eastern Central"
+37,21065,14005,3547491.8004,Mediterranean and Black Sea
+41,128442,62094,2863752.8844,"Atlantic, Southwest"
+47,113836,58660,1122228.3044,"Atlantic, Southeast"
+48,8874,1776,28343.4358,"Atlantic, Antarctic"
+51,204395,153753,6787835.0573,"Indian Ocean, Western"
+57,133290,93173,3538122.5559,"Indian Ocean, Eastern"
+58,11941,2067,21632.9418,"Indian Ocean, Antarctic"
+61,185594,127686,68293900.6488,"Pacific, Northwest"
+67,46705,17124,601572.8235,"Pacific, Northeast"
+71,214726,134078,5511303.7523,"Pacific, Western Central"
+77,300922,151185,1641602.482,"Pacific, Eastern Central"
+81,95991,57326,529333.3283,"Pacific, Southwest"
+87,153019,79117,1373398.5547,"Pacific, Southeast"
+88,25832,4012,14478.6481,"Pacific, Antarctic"
+UNMATCHED,14881,8034,2340044.7507,Outside FAO marine polygons

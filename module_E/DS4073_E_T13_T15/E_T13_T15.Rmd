@@ -1,0 +1,32 @@
+---
+title: "The Invisible Ocean | E. Hotspot synthesis"
+subtitle: "T13-T15 (scaffold)"
+output: html_document
+params:
+  shared_dir: "../../DS4073_GFW_2023_Shared"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%")
+source("analysis_E.R", local = TRUE)
+result <- run_e(params$shared_dir)
+total_millions <- formatC(result$total_hours / 1e6, format = "f", digits = 2, big.mark = ",")
+```
+
+## T13 - Hotspot grid cells {#t13}
+
+TODO(member-e): identify the strongest hotspot cells from the monthly grid tables.
+
+## T14 - Hotspot flag composition {#t14}
+
+TODO(member-e): describe the flag composition inside the hotspot cells.
+
+## T15 - Hotspot gear composition {#t15}
+
+TODO(member-e): compare the hotspot gear mix with the global gear mix.
+
+## Method and sources
+
+Apparent fishing activity is estimated from AIS (Global Fishing Watch v3.0, 2023)
+and measured in hours. Hotspot cells are ranked by summed grid hours; cell area
+varies with latitude. The scaffold reconciles to `r total_millions` million hours.
