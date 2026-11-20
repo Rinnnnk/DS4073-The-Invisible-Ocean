@@ -1,0 +1,32 @@
+:root { color-scheme: light; --ink: #182e3d; --muted: #45616d; --teal: #126e79; --rule: #dfe8eb; }
+* { box-sizing: border-box; }
+html { background: #f5f8f9; }
+body { color: var(--ink); font: 16px/1.6 system-ui, sans-serif; width: min(100% - 2rem, 1080px); margin: 2rem auto; padding: clamp(1.1rem, 4vw, 3rem); background: #fff; border-radius: 12px; }
+h1, h2, h3 { line-height: 1.2; }
+h1 { font-size: clamp(2.1rem, 5vw, 3.45rem); margin: .3rem 0; letter-spacing: -.035em; }
+h2 { font-size: 1.43rem; border-bottom: 1px solid var(--rule); padding-bottom: .65rem; margin-top: 2.7rem; }
+p.subtitle, h3.subtitle { color: var(--muted); font-size: 1.15rem; margin: 0 0 1.45rem; }
+a { color: #08636e; text-underline-offset: .18em; }
+img { display: block; max-width: 100%; height: auto; border: 1px solid var(--rule); border-radius: 7px; }
+.jump { display: flex; flex-wrap: wrap; gap: .4rem 1.1rem; margin-bottom: 1.3rem; }
+.summary-strip { display: flex; flex-wrap: wrap; gap: .9rem; border: 1px solid var(--rule); border-left: 5px solid var(--teal); padding: .9rem 1.1rem; background: #eef6f6; border-radius: 6px; }
+.summary-strip div { flex: 1 1 9.5rem; }
+.summary-strip span, .summary-strip strong { display: block; }
+.summary-strip strong { font-size: 1.42rem; line-height: 1.25; }
+.summary-strip span, .coverage-note { color: var(--muted); }
+.area-explorer { margin: 1.35rem 0; padding: 1.1rem 1.2rem; border: 1px solid var(--rule); border-radius: 8px; background: #f8fbfb; }
+.area-explorer h3 { margin: 0 0 .8rem; }
+.area-explorer label { display: block; font-weight: 600; margin-bottom: .25rem; }
+.area-explorer select { max-width: 100%; font: inherit; color: inherit; background: white; border: 1px solid #6b8591; border-radius: 4px; padding: .35rem .5rem; }
+.area-explorer table { width: 100%; border-collapse: collapse; font-size: .94rem; }
+.area-explorer caption { text-align: left; font-weight: 650; margin-bottom: .35rem; }
+.area-explorer th, .area-explorer td { padding: .34rem .45rem; border-bottom: 1px solid var(--rule); text-align: right; }
+.area-explorer th:first-child { text-align: left; }
+.area-explorer th[scope=row] { font-weight: 500; }
+[hidden] { display: none !important; }
+
+@media (max-width: 560px) { body { width: 100%; margin: 0; border-radius: 0; } .area-explorer { padding: .75rem; } .area-explorer table { font-size: .82rem; } }
+
+.area-explorer summary { font-weight: 650; cursor: pointer; }
+.area-explorer[open] summary { margin-bottom: .65rem; }
+.plotly.html-widget { max-width: 100%; }
