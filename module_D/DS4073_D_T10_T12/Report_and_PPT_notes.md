@@ -1,45 +1,41 @@
-# D. Flag distribution of apparent fishing activity
+# D. Flag classification of apparent fishing activity
 
-**Data and task abstraction.** TODO(member-d): describe the flag abstraction of the
-2023 Global Fishing Watch shared data. The measure is `fishing_hours` in hours.
-`flag_group` is the analysis flag label; `UNKNOWN` and `UNK_UNRESOLVED` are kept
-visible. The module reconciles to **111,712,128.6941 hours**.
+**Data and task abstraction.** The 2023 Global Fishing Watch shared data aggregate AIS-based apparent fishing activity by month, 0.1° grid cell, vessel flag, and `geartype`. Our quantitative measure is `fishing_hours`, in hours: an estimate of time spent in apparent fishing, not landed catch and not the number of vessels. D reads only the three shared summary tables (`annual_flag.csv`, `annual_flag_area.csv`, `area_names.csv`), so the 14.6 million-row detail files are not needed. The 2023 total is **111,712,128.6941 hours**, matching A's global total and the shared QA table; the audit file `results/tables/D_reconciliation.csv` records an absolute difference of **1.49e-08** hours.
 
-## T10 - Which vessel flags dominate?
+Two data decisions carry the whole page. First, the flag label is `flag_group`, not the raw `flag`: GFW pools every `UNKNOWN-*` value into `UNKNOWN` and leaves the unresolved `UNK` as `UNK_UNRESOLVED`. Both are kept **visible** rather than silently dropped, because they total **10,034,467 hours (8.98%)** — the second largest label in the data. Second, `annual_flag.csv` also carries an `hours` column (283,512,161.70) that measures AIS presence in all activities; it is **not** the analysis measure. Only `fishing_hours` reproduces the 111.7 million-hour total, so every share on this page divides by `fishing_hours`.
 
-**Calculation and design.** TODO(member-d): describe the annual ranking and the chart
-encoding (for example a horizontal bar with a zero baseline).
+## T10 — Which vessel flags carry the most annual hours?
 
-**Result.** TODO(member-d): report the leading flags and their shares.
+**Calculation and design.** Sum `fishing_hours` by `flag_group` in `annual_flag.csv` and rank descending; there are 220 flag groups. A horizontal bar encodes annual hours from a common zero baseline, with the same scale on every bar and the label at the bar end giving millions of hours plus the flag's share of the global total. Because 195 labels are individually tiny, the chart shows the 25 largest and pools the remainder as a single "Other 195 flags" bar, which is drawn in a lighter tone so it is not mistaken for one flag; the full 220-row ranking stays in `T10_flag_ranking.csv`. China is highlighted in navy, unknown-flag hours in grey, all other flags in teal, and the legend states this mapping. Shares use the 111,712,128.6941-hour denominator, so they add to 100% across all 220 rows. Flag codes are printed as GFW labels (`CHN`, `TWN`, `VNM`), and the caption says these are flag groups, not verified vessel nationality.
 
-## T11 - How is flag activity distributed by area?
+**Result.** `CHN` alone accounts for **52,509,581 hours (47.00%)** of all recorded fishing activity. The `UNKNOWN` group is second at **10,030,470 hours (8.98%)** — larger than any real flag except China. Then `KOR` **5,233,109 (4.68%)**, `TWN` **4,826,242 (4.32%)**, `VNM` **3,656,770 (3.27%)**, `ESP` **2,497,668 (2.24%)**, and `LKA` **2,459,867 (2.20%)**. The distribution is extremely top-heavy: 11 flags reach 80% of the global total, 21 reach 90%, and 74 reach 99%. Sixteen flags exceed one million hours while 29 record fewer than 1,000. The top three known flags (CHN, KOR, TWN) together hold **56.01%**.
 
-**Calculation and design.** TODO(member-d): describe the join to `area_names.csv` and
-how the area-by-flag distribution is shown.
+## T11 — Where is each flag's activity concentrated?
 
-**Result.** TODO(member-d): summarise the main flag-area patterns.
+**Calculation and design.** Join `annual_flag_area.csv` to `area_names.csv` to replace `area_code` with the FAO major-area name. For each flag, divide its hours in each area by **that flag's own annual total**, so every row sums to 100% and the matrix can be read as "where does this fleet work". This is a **row** normalization; normalizing columns instead would answer T12, not T11. Twenty-four of the largest known flags are shown, plus the two unknown rows, and the 19 FAO areas are ordered by total hours. FAO areas are assigned by grid centre, so grid centres that match no polygon are kept as a final "Outside FAO marine polygons" column rather than folded into a sea. Cells are coloured on a sequential white-to-teal-to-plum scale with 0% white, so blank-looking cells mean zero hours rather than missing data, and any cell at or above 10% carries its number. The row label repeats each flag's share of global hours, because a 100% row can still be a tiny fleet. The audit table `T11_flag_area.csv` keeps every flag-area pair with both `share_of_flag` and `share_of_area`, so either reading can be checked.
 
-## T12 - What share do the top three known flags contribute per area?
+**Result.** Most large fleets are strongly attached to one region. `CHN` records **91%** of its hours in the Northwest Pacific; `UNKNOWN` **86%** and `KOR` **86%** land in the same area. `GBR` puts **95%** in the Northeast Atlantic, `IDN` **93%** in the Eastern Indian Ocean, and `FRA` **86%** in the same Northeast Atlantic area. Distant-water fleets look different: `TWN` spreads across three areas (**49%** Northwest Pacific, **17%** Western Central Pacific, **15%** Eastern Indian Ocean), and `USA` splits between the Eastern Central Pacific (**34%**), Southwest Pacific (**24%**), and Western Central Atlantic (**23%**). Just **2.1%** of all hours fall outside FAO polygons, but that residual is not spread evenly.
 
-**Calculation and design.** TODO(member-d): describe how the top three known flags per
-area are computed, why `UNKNOWN` and `UNK_UNRESOLVED` are excluded from the ranking,
-and how the denominator is kept.
+## T12 — How much of each area do the top three known flags take?
 
-**Result.** TODO(member-d): report the contribution of the top three flags per area.
+**Calculation and design.** Within each area, rank flags by hours using **known flags only** — `UNKNOWN` and `UNK_UNRESOLVED` are excluded from the ranking because they are not fleets — then divide the sum of the three largest by the **area's total hours including unknown-flag hours**. Keeping the unknown hours in the denominator matters: if they were removed, an area that is mostly unlabelled would look as if three flags dominated it. Segments show top, second, and third flag, then all other known flags, then unknown-flag hours, so the whole bar is exactly the area total and the number at the right end is the top-three share. Areas are sorted by that share descending; areas with fewer than three known flags would show fewer segments and are flagged by the `n_known_flags` column. The final row shows grid centres outside FAO polygons separately, since it is not a major area. Because the ranking now varies by area, the same fleet appears as top flag in one region and third in another.
+
+**Result.** Across the 19 FAO areas the median top-three share is **70.56%**. The range runs from **45.6%** in the Northeast Atlantic, where no flag reaches even a fifth of the area, up to **100.0%** in the Arctic Sea. The Arctic figure is an artefact of thin coverage rather than dominance: only **three** known flags are recorded there at all, so "top three" is every flag present. Every area in these data has at least three known flags, but several polar and semi-enclosed areas have only 3–14, which is why their bars are short and their shares high. Unknown hours are uneven: they reach **13.0%** of the Southwest Atlantic and **12.6%** of the Northwest Pacific, while the Northeast Atlantic and Mediterranean are near zero. Note that a low concentration is not low volume: the Northwest Pacific is the largest area overall (68.3 million hours) yet sits at 80.3%, because 187 known flags fish there.
 
 ## Interpretation and limits
 
-Flag classification reflects GFW flag assignment and can be uncertain; unknown flags
-are common. Share comparisons describe recorded flags, not the true flag of the
-vessel. Never sum `mmsi_present` across cells or months to claim unique vessels.
-TODO(member-d): add any data-specific caveats.
+`flag_group` is the flag recorded in the GFW vessel record, and it is not verified nationality, ownership, or beneficial ownership; a vessel may be flagged in one state and owned in another. `UNKNOWN` means the flag could not be resolved at all, so the 8.98% it holds is genuinely unlabelled activity, not a fleet. Because the measure is AIS-derived, fleets that switch AIS off, or that operate vessels without AIS (much small-scale fishing), are under-represented, and reception quality varies by region — the same caveat applies to comparing areas. Row-normalized shares describe composition, not size: a flag with 100% of its hours in one area may still be negligible. Shares state their denominator explicitly, since T10 divides by the global total, T11 by the flag's own total, and T12 by the area total including unknown hours; mixing them would change the story. Finally, 2023 is a single year, so nothing here establishes a trend.
 
-## Slide sequence and speaking notes
+## Slide sequence and speaking notes (about 3 minutes total)
 
 | Slide | Main point | What to explain |
 |---|---|---|
-| T10 | TODO | TODO |
-| T11 | TODO | TODO |
-| T12 | TODO | TODO |
+| T10 | China alone is 47.00% of recorded hours; unknown flags are second at 8.98%. | Bar length is annual hours on a shared baseline. The grey "Other 195 flags" bar is a pool, not a fleet. Emphasize that the denominator is the global 111.7 million hours. |
+| T11 | Most large fleets fish in one region, but a few are distant-water. | Rows sum to 100%: the denominator is each flag's own annual total, so read across, not down. White cells are zeros. The last column is hours outside FAO polygons. |
+| T12 | The top three flags hold a median 70.6% of an area, from 45.6% to 100%. | The ranking excludes unknown flags but the denominator keeps them. The Arctic is 100% because only three known flags are recorded there. |
 
-Replace `[Speaker Name / Student ID]` on each slide before submission.
+On each PowerPoint slide replace `[Your name / student ID]`. R implementation uses `read.csv`, `aggregate`, `merge`, and `ggplot2` (`geom_col`, `geom_tile`, `geom_rect`, `scale_fill_gradientn`) — the only add-on package required is `ggplot2`, and no `data.table` or `sf` is needed. `D_T10_T12.html` can be shown as the demo page, and every number in it is computed from the shared tables at render time.
+
+## Cross-page review checklist for D (report consolidation)
+
+D also consolidates the group report, so the checks below are the ones to run over all five pages before the final rerun. Compare each page's stated global total with the shared QA table and with **111,712,128.6941** hours; confirm the unit is written as estimated fishing **hours** and never as catch, vessels, or "effort" without definition. Check that every percentage names its denominator (global total, the row's own total, or the area total) and that unknown-flag and unmatched-area hours are either shown or explicitly excluded, with the exclusion stated. Verify that the file names embedded in the dashboard match what each module actually writes, that figure captions repeat the data caveats, and that no page sums `mmsi_present` across cells or months. Record each discrepancy with the page, the number found, and the number expected, and send it to that page's author before the consolidated rerun.

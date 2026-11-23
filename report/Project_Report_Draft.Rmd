@@ -61,9 +61,9 @@ TODO: complete the task table. Each task names its question, data, and encoding.
 | T07 | C | Which gears dominate? | Horizontal bar |
 | T08 | C | How does the gear mix change? | 100 percent stacked bar |
 | T09 | C | Where are leading gears observed? | Faceted maps |
-| T10 | D | Which flags dominate? | TODO |
-| T11 | D | How is flag activity distributed by area? | TODO |
-| T12 | D | Top three known flags per area? | TODO |
+| T10 | D | Which flags dominate? | Horizontal bar, top 25 plus a pooled remainder |
+| T11 | D | How is flag activity distributed by area? | Row-normalized flag x area heat map |
+| T12 | D | Top three known flags per area? | Sorted composition bars per area |
 | T13 | E | Which grids are hotspots? | TODO |
 | T14 | E | Which flags dominate hotspots? | TODO |
 | T15 | E | How does hotspot gear mix compare? | TODO |
@@ -85,6 +85,29 @@ TODO: merge the module findings A-E into a coherent story. Quote the reconciled
 numbers from each module `results/tables/`. Discuss where activity concentrates, the
 seasonal structure, gear and flag composition, and the hotspot composition. Link
 every claim to a figure or table.
+
+## Module D - Flag distribution (T10-T12)
+
+**Which flags carry the hours.** Ranking the 220 flag groups by annual `fishing_hours`
+puts `CHN` first with **52,509,581 hours (47.00%)**, followed by the pooled `UNKNOWN`
+group at **10,030,470 hours (8.98%)** - larger than any real flag except China - then
+`KOR` (4.68%), `TWN` (4.32%) and `VNM` (3.27%). The distribution is highly top-heavy:
+11 flags reach 80% of the global total, 21 reach 90%, and the top three known flags
+hold 56.01% between them (fig-D1).
+
+**Where each flag fishes.** Normalizing each flag by its own annual total shows that
+most large fleets are tied to a single region: `CHN` records 91% of its hours in the
+Northwest Pacific, `GBR` 95% in the Northeast Atlantic, and `IDN` 93% in the Eastern
+Indian Ocean, while `TWN` spreads over three areas (49%, 17%, 15%). Just 2.1% of all
+hours fall outside every FAO polygon (fig-D2).
+
+**How concentrated each area is.** Taking the three largest known flags per area and
+dividing by the area total - unknown-flag hours stay in the denominator - gives a
+median share of **70.56%**, ranging from 45.6% in the Northeast Atlantic to 100% in the
+Arctic Sea, where only three known flags are recorded at all. Unknown hours reach 13.0%
+of the Southwest Atlantic and 12.6% of the Northwest Pacific, so the ranking and the
+denominator must be read together (fig-D3). Full tables are in
+`module_D/DS4073_D_T10_T12/results/tables/`.
 
 # Limitations
 

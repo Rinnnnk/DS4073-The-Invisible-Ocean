@@ -74,15 +74,21 @@ Module D - Flag distribution {data-icon="fa-flag"}
 
 ### T10 - Flag ranking
 
-TODO(module-d): embed `../module_D/DS4073_D_T10_T12/results/figures/T10_flag_ranking.png` once analysis_D.R produces it.
+```{r}
+knitr::include_graphics("../module_D/DS4073_D_T10_T12/results/figures/T10_flag_ranking.png")
+```
 
 ### T11 - Flag activity by area
 
-TODO(module-d): embed `../module_D/DS4073_D_T10_T12/results/figures/T11_flag_area.png` once analysis_D.R produces it.
+```{r}
+knitr::include_graphics("../module_D/DS4073_D_T10_T12/results/figures/T11_flag_area.png")
+```
 
 ### T12 - Top three known flags per area
 
-TODO(module-d): embed `../module_D/DS4073_D_T10_T12/results/figures/T12_top3_flags_by_area.png` once analysis_D.R produces it.
+```{r}
+knitr::include_graphics("../module_D/DS4073_D_T10_T12/results/figures/T12_top3_flags_by_area.png")
+```
 
 Module E - Hotspot synthesis {data-icon="fa-fire"}
 ===================================================
