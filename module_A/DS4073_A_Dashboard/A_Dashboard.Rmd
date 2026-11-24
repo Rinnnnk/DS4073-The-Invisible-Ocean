@@ -1,0 +1,111 @@
+---
+title: "The Invisible Ocean"
+output:
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: scroll
+    self_contained: true
+    mathjax: null
+    css: dashboard.css
+params:
+  shared_dir: "../DS4073_GFW_2023_Shared"
+  student_name: "Wangtao"
+  student_id: "2430026200"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+source("analysis_A.R", local = TRUE)
+source("supplements_A.R", local = TRUE)
+shared_path <- resolve_a_shared(params$shared_dir)
+a <- run_a(shared_path)
+extra <- plot_a_supplements(shared_path, a)
+a_has_plotly <- requireNamespace("plotly", quietly = TRUE)
+a_chart <- function(path, label) {
+  htmltools::tags$button(
+    type = "button", class = "a-zoom", title = "Open full-size chart",
+    `aria-label` = paste("Enlarge", label),
+    htmltools::tags$img(src = unname(path), alt = label)
+  )
+}
+```
+
+A. Spatial distribution
+=======================================================================
+
+T01. Where is fishing activity concentrated?
+-----------------------------------------------------------------------
+
+### T01 · Global distribution
+
+```{r t01-main}
+htmltools::tagList(
+  htmltools::div(class = "a-identity",
+    htmltools::strong("Name"), params$student_name,
+    htmltools::strong("Student ID"), params$student_id),
+  htmltools::div(class = "a-lead",
+    "For classmates exploring where AIS-observed fishing activity was concentrated in 2023. Click a static chart to enlarge it."),
+  a_chart(a$paths[["T01"]], "Annual fishing hours across global grid cells"))
+```
+
+**Read the map.** Position shows where each 0.1° cell is. Log-scaled color makes the wide range of annual hours visible. High values cluster along the East Asian coast. Gray is recorded zero and blank ocean has no record.
+
+### Northwest Pacific close-up
+
+```{r t01-closeup}
+a_chart(extra$paths[1], "Fishing hours near the East Asian coast and in the Northwest Pacific")
+```
+
+**Why zoom in?** The same grid and color scale expose coastal patterns that are harder to see globally. The circled cell at **119.35°E, 35.05°N** is the annual maximum at **316,398.92 hours**, aggregated across vessels.
+
+T02. How do FAO marine areas compare?
+-----------------------------------------------------------------------
+
+### T02 · Fishing hours by marine area
+
+```{r t02-main}
+a_chart(a$paths[["T02"]], "Ranked total fishing hours in FAO marine areas")
+```
+
+**Compare totals.** Sorted bars share a zero baseline. The Northwest Pacific (61) leads with **68.29 million hours**, or **61.13%** of the global total. The global denominator includes the unmatched category shown in gray.
+
+### Active footprint and fishing hours
+
+```{r t02-footprint}
+if (a_has_plotly) {
+  interactive_a_footprint(extra, a)
+} else {
+  a_chart(extra$paths[2], "Active grid count versus fishing hours for each FAO marine area")
+}
+```
+
+**Compare coverage with totals.** The scatterplot keeps each region's active cell count and total hours visible together. The Northwest Pacific had **127,686** active cells, fewer than the Western Indian Ocean's **153,753**, and much higher total hours. Unmatched cells are excluded here. `r if (a_has_plotly) "Hover over a point for the area name, cell count and hours." else ""`
+
+T03. How concentrated are the hours across cells?
+-----------------------------------------------------------------------
+
+### T03 · Cumulative contribution
+
+```{r t03-main}
+if (a_has_plotly) {
+  interactive_a_curve(a)
+} else {
+  a_chart(a$paths[["T03"]], "Cumulative share of fishing hours by ranked active cells")
+}
+```
+
+**Read the curve.** Sort cells with positive hours from highest to lowest. The steep rise shows concentration. The top **1%, 5%, and 10%** contribute **65.98%, 85.16%, and 90.21%** of all hours. The denominator for cell ranks is **1,193,301** active cells. `r if (a_has_plotly) "Select **Top 10%** to focus on the steepest part of the curve." else ""`
+
+### Contribution of each rank band
+
+```{r t03-bands}
+a_chart(extra$paths[3], "Separate fishing-hour contributions of four active-cell rank bands")
+```
+
+**Compare distinct groups.** Each bar represents a separate rank band. The remaining **90%** of active cells account for **9.79%** of all hours. Counts round up at the 1%, 5%, and 10% thresholds. Cell counts refer to angular grids whose physical area varies by latitude.
+
+<div class="a-source">Fishing hours are GFW estimates from AIS observations. Coverage varies across places. FAO areas are assigned by grid centre. Sources: <a href="https://doi.org/10.5281/zenodo.14982712">GFW v3.0</a>, <a href="https://www.fao.org/cwp-on-fishery-statistics/handbook/general-concepts/main-water-areas">FAO</a>, and <a href="https://www.naturalearthdata.com/downloads/110m-physical-vectors/110m-land/">Natural Earth</a>.</div>
+
+```{r zoom-script}
+htmltools::includeScript("zoom.js")
+```

@@ -1,0 +1,16 @@
+body { background: #edf3f5; color: #173746; }
+.navbar-inverse, .navbar { background: #163846; border-color: #163846; }
+.chart-wrapper, .chart-stage { background: #fff; }
+.chart-wrapper .chart-title { color: #173746; font-size: 16px; font-weight: 700; padding: 10px 12px; }
+.chart-stage { padding: 8px 13px 14px; font-size: 14px; line-height: 1.5; }
+.chart-stage p { margin-top: 10px; }
+.a-identity { display: flex; flex-wrap: wrap; gap: 5px 9px; background: #e7f2f0; padding: 7px 10px; border-radius: 5px; }
+.a-identity strong + strong { margin-left: 4px; }
+.a-lead, .a-source { margin: 8px 0; color: #466472; font-size: 13px; }
+.a-zoom { display: block; width: 100%; border: 1px solid #e3ebef; padding: 0; background: #fff; cursor: zoom-in; }
+.a-zoom:focus-visible { outline: 3px solid #167970; }
+.a-zoom img { display: block; width: 100%; height: auto; }
+.a-zoom-dialog { width: min(97vw, 1450px); max-height: 95vh; border: 1px solid #9cb2be; border-radius: 8px; padding: 14px; }
+.a-zoom-dialog::backdrop { background: rgba(12,29,40,.7); }
+.a-zoom-dialog img { display: block; width: 100%; height: auto; margin: 8px auto 0; }
+.a-zoom-dialog button { background: #163846; color: #fff; padding: 6px 14px; border: 0; border-radius: 4px; }
