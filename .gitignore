@@ -20,5 +20,6 @@ __pycache__/
 .DS_Store
 Thumbs.db
 
-# Keep the small Natural Earth land asset required by module A
+# Keep the small Natural Earth land assets required by modules A and E
 !module_A/DS4073_A_T01_T03/assets/ne_110m_land.zip
+!module_E/DS4073_E_T13_T15/assets/ne_110m_land.zip

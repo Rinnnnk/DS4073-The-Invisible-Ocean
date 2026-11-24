@@ -1,0 +1,9 @@
+body { color:#1a3647; background:#ffffff; max-width:1000px; padding:30px 20px; line-height:1.55; font-family:system-ui,sans-serif; }
+.main-container { max-width:1020px !important; background:white; padding:38px 35px; }
+h1.title { font-weight:700; color:#172f40; letter-spacing:-0.025em; }
+h2 { margin-top:38px; border-top:1px solid #dce7ea; padding-top:18px; font-weight:700; }
+h3.subtitle, p { color:#36596b; }
+.summary { background:#e6f2ef; padding:18px 20px; border-left:4px solid #277d80; margin:22px 0; }
+a { color:#1c656c; }
+table { width:100%; }
+code { color:#24495a; background:#eef3f5; }
