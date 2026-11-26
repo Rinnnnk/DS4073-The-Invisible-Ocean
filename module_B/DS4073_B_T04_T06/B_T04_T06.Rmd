@@ -1,32 +1,144 @@
 ---
-title: "The Invisible Ocean | B. Monthly variation"
-subtitle: "T04-T06 (scaffold)"
-output: html_document
+title: "Monthly fishing activity in 2023"
+subtitle: "The Invisible Ocean | B. Monthly change"
+output:
+  html_document:
+    self_contained: true
+    theme: null
+    highlight: null
+    mathjax: null
+    css: report.css
 params:
   shared_dir: "../../DS4073_GFW_2023_Shared"
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE, out.width = "100%")
-source("analysis_B.R", local = TRUE)
-result <- run_b(params$shared_dir)
-total_millions <- formatC(result$total_hours / 1e6, format = "f", digits = 2, big.mark = ",")
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE, out.width = "100%", fig.retina = 1)
+code <- new.env(parent = globalenv())
+sys.source("analysis_B.R", envir = code)
+sys.source("interactive_B.R", envir = code)
+result <- code$run_b(params$shared_dir)
+m <- result$monthly
+peaks <- result$peaks
+monthly_maximum <- m[which.max(fishing_hours)]
+monthly_minimum <- m[which.min(fishing_hours)]
+daily_maximum <- m[which.max(hours_per_day)]
+outside_maximum <- m[which.max(outside_northwest_hours)]
+oct_minus_may <- function(field) (m[month == "Oct", get(field)] - m[month == "May", get(field)]) / 1e6
+complete_peaks <- peaks[observed_months == 12L]
+report_hours <- function(x) formatC(x, format = "f", digits = 0, big.mark = ",")
 ```
 
-## T04 - Monthly totals {#t04}
+<nav class="jump" aria-label="Task sections">
+<a href="#t04">T04 · Global totals</a>
+<a href="#t05">T05 · Calendar adjustment</a>
+<a href="#t06">T06 · FAO area peaks</a>
+</nav>
 
-TODO(member-b): compare estimated fishing hours across the twelve months.
+<div class="summary-strip">
+<div><strong>`r sprintf("%.2f M", result$annual_hours / 1e6)`</strong><span>estimated fishing hours</span></div>
+<div><strong>`r monthly_maximum$month`</strong><span>largest monthly total</span></div>
+<div><strong>`r daily_maximum$month`</strong><span>highest hours per day</span></div>
+</div>
 
-## T05 - Average daily hours {#t05}
+## T04 · How did global activity vary by month? {#t04}
 
-TODO(member-b): compare average daily fishing hours per month.
+```{r t04-figure, fig.alt="Global monthly estimated fishing hours for 2023. May was lowest and October highest."}
+knitr::include_graphics(result$paths[["T04"]])
+```
 
-## T06 - Peak month per FAO area {#t06}
+The global total peaked in **`r monthly_maximum$month` at `r sprintf("%.2f", monthly_maximum$fishing_hours / 1e6)` million hours**. The low was **`r monthly_minimum$month` at `r sprintf("%.2f", monthly_minimum$fishing_hours / 1e6)` million hours**. The peak was `r sprintf("%.2f", monthly_maximum$fishing_hours / monthly_minimum$fishing_hours)` times the low. The 12 monthly sums reconcile with the global annual total of `r report_hours(result$annual_hours)` estimated hours.
 
-TODO(member-b): identify the peak month for each FAO area.
+**Design.** Point position encodes month and total hours on a shared axis. The line links successive months. The dashed reference gives the mean monthly total, and direct labels identify the extrema.
 
-## Method and sources
+## T05 · Does the peak change after adjusting for month length? {#t05}
 
-Apparent fishing activity is estimated from AIS (Global Fishing Watch v3.0, 2023)
-and measured in hours. It is not catch and not a vessel count. The scaffold
-reconciles to `r total_millions` million hours. See `analysis_B.R`.
+```{r t05-figure, fig.alt="Slope chart comparing month rankings by monthly total and per calendar day. September overtakes October."}
+knitr::include_graphics(result$paths[["T05"]])
+```
+
+Yes. October recorded **`r report_hours(monthly_maximum$fishing_hours)` hours in `r monthly_maximum$days` days**, or `r report_hours(monthly_maximum$hours_per_day)` hours per day. September recorded **`r report_hours(daily_maximum$hours_per_day)` hours per day** over `r daily_maximum$days` days, taking first place after adjustment. February is divided by `r m$days[2]` days.
+
+**Design.** The two axes share the same rank scale. Each line connects the same month across the two measures. Color highlights the two leaders. The crossing makes the reversal visible without putting hours and hours per day on a single quantitative axis.
+
+## T06 · Which areas account for the global peak? {#t06}
+
+### Global total and regional contributions
+
+**The peak shifts from `r monthly_maximum$month` to `r outside_maximum$month` once the Northwest Pacific is excluded.** From May to October, the global total rose by `r sprintf("%.2f", oct_minus_may("fishing_hours"))` million estimated hours. The Northwest Pacific rose by `r sprintf("%.2f", oct_minus_may("northwest_hours"))` million hours, while the remaining grid cells fell by `r sprintf("%.2f", abs(oct_minus_may("outside_northwest_hours")))` million. The remainder includes unmatched grid centres.
+
+Hover for estimated hours. Use the area menu below the top chart to compare a region's monthly shares with the global profile. Both views use the same time axis, so zooming to a period in either view keeps the months aligned.
+
+```{r t06-plotly, out.width="100%"}
+code$build_interactive_b(result)
+```
+
+**Design.** The top view uses a common absolute scale and larger dots for the two maxima. The lower view compares the share of each series' own recorded annual hours, so a lower-volume area can be compared with the global profile. The menu includes the areas with records for all 12 months.
+
+### Peak months across FAO areas
+
+```{r t06-figure, fig.alt="Heatmap of estimated hours by month and FAO marine area. Dots mark peaks in areas with 12 months of records, and gray cells have no record."}
+knitr::include_graphics(result$paths[["T06"]])
+```
+
+The **`r nrow(complete_peaks)` areas with records for every month** reached their peaks across **`r length(unique(result$area_month$month_number[result$area_month$is_peak & result$area_month$observed_months == 12L]))` different months**. The Northwest Pacific (61) peaked in October, the Northeast Atlantic (27) in May, and the Western Central Pacific (71) in August. Arctic Sea (18) and Pacific Antarctic (88) had 7 and 6 months with records, respectively, and are not assigned a full-year peak.
+
+**Design.** Each tile shows the month's share of the hours recorded that year in its area. This supports a comparison of timing across areas; the values table provides absolute hours. Within a row the peak month has the same ranking under the two measures. The sequential color scale saturates at 20%, and the peak marker makes row maxima identifiable. Gray cells mean that the shared summary has no record for that area-month.
+
+```{r area-detail, results='asis'}
+tag <- htmltools::tags
+area_opts <- lapply(seq_len(nrow(peaks)), function(i) {
+  row <- peaks[i]
+  tag$option(value = row$area_code, paste(row$area_code, row$area_name))
+})
+area_tables <- lapply(seq_len(nrow(peaks)), function(i) {
+  area_peak <- peaks[i]
+  rows <- result$area_month[area_code == area_peak$area_code]
+  peak_text <- if (area_peak$observed_months == 12L) {
+    paste("Peak:", area_peak$peak_months)
+  } else {
+    "Partial coverage"
+  }
+  tag$div(
+    class = "area-table", `data-area` = area_peak$area_code,
+    hidden = if (i == 1L) NULL else NA,
+    tag$p(class = "coverage-note", paste(peak_text, "| Months with records:",
+                                         paste0(area_peak$observed_months, "/12"))),
+    tag$table(
+      tag$caption(paste(area_peak$area_name, "monthly values")),
+      tag$thead(tag$tr(tag$th(scope = "col", "Month"), tag$th(scope = "col", "Estimated hours"),
+                       tag$th(scope = "col", "Share of recorded area-year hours"))),
+      do.call(tag$tbody, lapply(seq_len(nrow(rows)), function(j) {
+        cell <- rows[j]
+        tag$tr(
+          tag$th(scope = "row", month.abb[cell$month_number]),
+          tag$td(if (is.na(cell$fishing_hours)) "No record" else report_hours(cell$fishing_hours)),
+          tag$td(if (is.na(cell$recorded_share)) "—" else sprintf("%.1f%%", 100 * cell$recorded_share))
+        )
+      }))
+    )
+  )
+})
+area_explorer <- tag$details(
+  class = "area-explorer",
+  tag$summary("View monthly values by FAO area"),
+  tag$label("Choose area", `for` = "b-area-select"),
+  do.call(tag$select, c(list(id = "b-area-select"), area_opts)),
+  tag$div(id = "b-area-output", `aria-live` = "polite", area_tables),
+  tag$script(htmltools::HTML(paste(
+    "(function () {",
+    "const select = document.getElementById('b-area-select');",
+    "const tables = document.querySelectorAll('#b-area-output [data-area]');",
+    "function showArea() { tables.forEach(t => { t.hidden = t.dataset.area !== select.value; }); }",
+    "select.addEventListener('change', showArea); showArea();",
+    "})();", sep = "\n"
+  )))
+)
+cat("\n```{=html}\n", as.character(area_explorer), "\n```\n", sep = "")
+```
+
+## Data & interpretation
+
+- **Data.** Global Fishing Watch v3.0, January–December 2023. The global chart uses all grid centers. The area heatmap uses the 19 official FAO marine areas and excludes `r sprintf("%.2f%%", 100 * result$unmatched_hours / result$annual_hours)` of global hours from unmatched grid centers.
+- **Measure.** These are AIS-derived estimates of fishing activity. They describe the observed 2023 data. Reception and classification differences can affect comparisons. A peak in one year does not establish a repeated seasonal cycle.
+- **Sources.** [Global Fishing Watch v3.0](https://doi.org/10.5281/zenodo.14982712) · [FAO marine fishing areas](https://www.fao.org/cwp-on-fishery-statistics/handbook/general-concepts/main-water-areas)
